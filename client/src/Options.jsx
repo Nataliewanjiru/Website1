@@ -3,12 +3,15 @@ import { useEffect , useState, useRef} from "react";
 import Tables from './Tables';
 import "./index.css"
 
+
 function Options({counties}) {
 const [info,setInfo]= useState([])
 const [detail,setDetail]= useState()
 const [search,setSearch]=useState()
+const [ward,setWard]= useState([])
 const conRef = useRef(null); 
 const seaRef = useRef(null); 
+const wardRef =useRef((null))
 
 
 useEffect(()=>{
@@ -31,13 +34,15 @@ function handleSubmit(e){
   conRef.current.focus();
 }, [detail]);
 
+
+{/*Function for filter*/}
 const countyFilter = info.filter((item)=>{
   const nameMatches = !detail || detail === "" || item.name.toLowerCase().includes(detail);
  return nameMatches
     
 })
 
-const filtered = countyFilter.map(county => ({
+const subFiltered = countyFilter.map(county => ({
   ...county,
   subcounties: county.subcounties.filter(subcounty => {
     if (!search || search === '') {
@@ -49,13 +54,23 @@ const filtered = countyFilter.map(county => ({
 }));
 
 
+const filtered=subFiltered.map(county=>({
+  ...county,
+  subcounties:county.subcounties.map(subCounty =>({
+    ...subCounty,
+    wards:subCounty.wards.filter(wardSearch=>{
+      if(!ward || ward===""){
+        return true
+      }else{
+        return wardSearch.name.toLowerCase().includes(ward)
+      }
+    })
+  }))
+}))
 
 console.log(filtered)
 
 {/* For the subCounty Search*/}
-function handleSubmit(e){
-  e.preventDefault();
- }
 
  function searchChange(event){
   let value=event.target.value
@@ -67,12 +82,25 @@ function handleSubmit(e){
 }, [detail]);
 
 
+{/* For the County Search*/}
+
+ function wardChange(event){
+  let value=event.target.value
+   setWard(value)
+   }
+
+ useEffect(() => {
+  wardRef.current.focus();
+}, [detail]);
+
+
+
   return (
     <>
     <form onSubmit={handleSubmit}>
     <input type="search" placeholder="Search county..." value={detail} onChange={Detail} ref={conRef}></input>
     <input type="search" placeholder="Search subCounty..." value={search} onChange={searchChange} ref={seaRef}></input>
-   
+    <input type="search" placeholder="Search ward..." value={ward} onChange={wardChange} ref={wardRef}></input>
    </form>
    <Tables counties={filtered} />
     </>
