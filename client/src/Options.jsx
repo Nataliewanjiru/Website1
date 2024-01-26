@@ -68,7 +68,6 @@ const filtered=subFiltered.map(county=>({
   }))
 }))
 
-console.log(filtered)
 
 {/* For the subCounty Search*/}
 
