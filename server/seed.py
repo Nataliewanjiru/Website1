@@ -2,8 +2,8 @@ from app import app
 from models import *
 
 with app.app_context():
-        county = Ward(name="Nyayo highrise",subcounty_id=1)
-        db.session.add(county)
+        county = Ward.query.get(6)
+        db.session.delete(county)
         db.session.commit()
         print("Seeding successful!")
 

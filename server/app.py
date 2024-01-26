@@ -52,6 +52,7 @@ def getSubCountyWards(cid, sid):
         data = subcounty.subWard()
         return data
 
+
 @app.route('/county/<int:id>/subcounty')        
 def getSubCounties(id):
     county = County.query.get(id)
@@ -63,4 +64,4 @@ def getSubCounties(id):
 
 # Run the application
 if __name__ == '__main__':
-   app.run(debug=True,port=5670)
+   app.run(debug=True,port=5674)
