@@ -1,6 +1,7 @@
 from flask import Flask,jsonify
 from flask_migrate import Migrate
 from models import *
+from flask_cors import CORS
 
 # Create a Flask application
 app = Flask(__name__)
@@ -12,7 +13,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 migrate = Migrate(app, db)
 
 db.init_app(app)
-
+CORS(app)
 # Define a route
 @app.route('/')
 def index():
@@ -27,6 +28,19 @@ def countyDetails(id):
         return "County not found"
     data=county.serialize()
     return data
+
+@app.route('/county')
+def allcountyDetails():
+    # Get the county with the given id
+    counties = County.query.all()
+    list=[]
+    for county in counties:
+       data=county.serialize()
+       list.append(data)
+    
+    return list
+    
+
 
 #Gets wards in that subcounty
 @app.route('/county/<int:cid>/subcounty/<int:sid>')
@@ -49,4 +63,4 @@ def getSubCounties(id):
 
 # Run the application
 if __name__ == '__main__':
-   app.run(debug=True)
+   app.run(debug=True,port=5679)
