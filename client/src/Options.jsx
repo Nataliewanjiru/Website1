@@ -9,9 +9,11 @@ const [info,setInfo]= useState([])
 const [detail,setDetail]= useState()
 const [search,setSearch]=useState()
 const [ward,setWard]= useState([])
+const [loc,setLoc]=useState([])
 const conRef = useRef(null); 
 const seaRef = useRef(null); 
 const wardRef =useRef((null))
+const locRef = useRef((null))
 
 
 useEffect(()=>{
@@ -38,8 +40,7 @@ function handleSubmit(e){
 {/*Function for filter*/}
 const countyFilter = info.filter((item)=>{
   const nameMatches = !detail || detail === "" || item.name.toLowerCase().includes(detail);
- return nameMatches
-    
+ return nameMatches  
 })
 
 const subFiltered = countyFilter.map(county => ({
@@ -54,7 +55,7 @@ const subFiltered = countyFilter.map(county => ({
 }));
 
 
-const filtered=subFiltered.map(county=>({
+const wardfiltered=subFiltered.map(county=>({
   ...county,
   subcounties:county.subcounties.map(subCounty =>({
     ...subCounty,
@@ -69,6 +70,24 @@ const filtered=subFiltered.map(county=>({
 }))
 
 
+const filtered=wardfiltered.map(county=>({
+  ...county,
+  subcounties:county.subcounties.map(subCounty =>({
+    ...subCounty,
+    wards:subCounty.wards.map(ward=>({
+      ...ward,
+      locations:ward.locations.filter(locSearch=>{
+        if (!loc||loc===''){
+          return true
+        }else{
+          return locSearch.name.toLowerCase().includes(loc)
+        }
+      })
+    }))
+  }))
+}))
+
+
 {/* For the subCounty Search*/}
 
  function searchChange(event){
@@ -78,10 +97,10 @@ const filtered=subFiltered.map(county=>({
 
  useEffect(() => {
   seaRef.current.focus();
-}, [detail]);
+}, [search]);
 
 
-{/* For the County Search*/}
+{/* For the ward Search*/}
 
  function wardChange(event){
   let value=event.target.value
@@ -90,8 +109,18 @@ const filtered=subFiltered.map(county=>({
 
  useEffect(() => {
   wardRef.current.focus();
-}, [detail]);
+}, [ward]);
 
+
+{/* For the location Search*/}
+function locChange(event){
+  let value=event.target.value
+   setLoc(value)
+   }
+
+ useEffect(() => {
+  locRef.current.focus();
+}, [loc]);
 
 
   return (
@@ -100,6 +129,7 @@ const filtered=subFiltered.map(county=>({
     <input type="search" placeholder="Search county..." value={detail} onChange={Detail} ref={conRef}></input>
     <input type="search" placeholder="Search subCounty..." value={search} onChange={searchChange} ref={seaRef}></input>
     <input type="search" placeholder="Search ward..." value={ward} onChange={wardChange} ref={wardRef}></input>
+    <input type="search" placeholder="Search location..." value={loc} onChange={locChange} ref={locRef}></input>
    </form>
    <Tables counties={filtered} />
     </>
