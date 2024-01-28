@@ -7,7 +7,7 @@ function App() {
   const [counties, setCounties] = useState([])
 
   useEffect(()=>{
-    fetch('http://127.0.0.1:5674/county')
+    fetch('http://127.0.0.1:5679/county')
     .then(res=>res.json())
     .then(data => setCounties(data))
   },[])

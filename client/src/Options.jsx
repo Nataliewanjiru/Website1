@@ -38,6 +38,7 @@ function handleSubmit(e){
 
 
 {/*Function for filter*/}
+{/*County filter*/}
 const countyFilter = info.filter((item) => {
   if (detail) {
     const nameMatches = !detail || detail === "" || item.name.toLowerCase().includes(detail.toLowerCase());
@@ -53,27 +54,33 @@ const countyFilter = info.filter((item) => {
       });
     });
     return nameMatches;
+  }else if(loc && item.subcounties){
+    const nameMatches = item.subcounties.some((sub) => {
+      return sub.wards && sub.wards.some((wardItem) => {
+        
+      })
+    })
   }
   return false;
 });
 
 
-
+{/*subCounty filter*/}
 const subFiltered =countyFilter.map((county) => ({
   ...county,
   subcounties: county.subcounties.filter((subcounty) => {
-    if (!search || search === '') {
-      return true;
+    if (search) {
+      const nameMatches = !search || search === "" || subcounty.name.toLowerCase().includes(search)
+       return nameMatches;
     } 
-    else {
-      console.log(countyFilter)
-      return (
-        subcounty.name.toLowerCase().includes(search)
-      );
+    else if(ward) {
+      console.log('subward:', subcounty.wards);
+      const nameMatches = !ward || ward==="" || subcounty.wards.some((subward) => subward.name.toLowerCase().includes(ward));
+      return nameMatches;
     }
+    return true;
   }),
 }))
-
 
 
 
@@ -90,6 +97,7 @@ const filtered=subFiltered.map(county=>({
     })
   }))
 }))
+
 
 {/*
 const sfiltered=wardfiltered.map(county=>({
