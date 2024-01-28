@@ -38,24 +38,46 @@ function handleSubmit(e){
 
 
 {/*Function for filter*/}
-const countyFilter = info.filter((item)=>{
-  const nameMatches = !detail || detail === "" || item.name.toLowerCase().includes(detail);
- return nameMatches  
-})
+const countyFilter = info.filter((item) => {
+  if (detail) {
+    const nameMatches = !detail || detail === "" || item.name.toLowerCase().includes(detail.toLowerCase());
+    return nameMatches;
+  } else if (search && item.subcounties) {
+    const nameMatches = item.subcounties.some((sub) => sub.name.toLowerCase().includes(search.toLowerCase()));
+    return nameMatches;
+  } else if (ward && item.subcounties) {
+    const nameMatches = item.subcounties.some((sub) => {
+      return sub.wards && sub.wards.some((wardItem) => {
+        // Check if wardItem.name is a string before calling toLowerCase
+        return wardItem.name && typeof wardItem.name === 'string' && wardItem.name.toLowerCase().includes(ward);
+      });
+    });
+    return nameMatches;
+  }
+  return false;
+});
 
-const subFiltered = countyFilter.map(county => ({
+
+
+const subFiltered =countyFilter.map((county) => ({
   ...county,
-  subcounties: county.subcounties.filter(subcounty => {
+  subcounties: county.subcounties.filter((subcounty) => {
     if (!search || search === '') {
       return true;
-    } else {
-      return subcounty.name.toLowerCase().includes(search);
+    } 
+    else {
+      console.log(countyFilter)
+      return (
+        subcounty.name.toLowerCase().includes(search)
+      );
     }
   }),
-}));
+}))
 
 
-const wardfiltered=subFiltered.map(county=>({
+
+
+const filtered=subFiltered.map(county=>({
   ...county,
   subcounties:county.subcounties.map(subCounty =>({
     ...subCounty,
@@ -69,8 +91,8 @@ const wardfiltered=subFiltered.map(county=>({
   }))
 }))
 
-
-const filtered=wardfiltered.map(county=>({
+{/*
+const sfiltered=wardfiltered.map(county=>({
   ...county,
   subcounties:county.subcounties.map(subCounty =>({
     ...subCounty,
@@ -87,7 +109,7 @@ const filtered=wardfiltered.map(county=>({
   }))
 }))
 
-
+*/}
 {/* For the subCounty Search*/}
 
  function searchChange(event){
