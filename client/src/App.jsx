@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 import Options from './Options'
-import Tables from './Tables'
+import { Route, Routes,Navigate } from 'react-router-dom';
+import Dropdown from './Dropdown';
+
 
 
 function App() {
@@ -15,8 +17,10 @@ function App() {
     
   return (
     <>
-     <Options counties={counties}/>  
-    
+    <Routes>
+    <Route path="/" exact="true" element={<Options counties={counties}/>}/>
+    <Route path="/two" exact="true" element={<Dropdown counties={counties}/>}/>
+    </Routes>
     </>
   )
 }
